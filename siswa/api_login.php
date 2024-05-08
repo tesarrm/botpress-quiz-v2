@@ -16,7 +16,7 @@ switch ($method) {
         $nis = $_POST['nis'];
         $password = $_POST['password'];
 
-        $query1 = "SELECT * FROM siswa WHERE nis= $nis AND password= $password";
+        $query1 = "SELECT * FROM siswa WHERE nis= $nis AND password = '$password'";
         $result1 = mysqli_query($conn, $query1);
 
         // jika ada maka kirim otp

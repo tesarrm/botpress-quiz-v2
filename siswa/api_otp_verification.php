@@ -1,5 +1,6 @@
 <?php
 include "../utils/header.php"; // $conn, $method, $result
+include '../nobox/nobox.php';
 
 
 
@@ -7,14 +8,28 @@ switch ($method) {
     case 'POST':
 
         $email = $_POST['email'];
+        $password = $_POST['password'];
         $otp = $_POST['otp'];
+
+        // login nobox
+        $token = generateToken($email, $password);
+
+        $sql = "INSERT INTO token_nobox (email, token) VALUES ('$email','$token')";
+
+        global $conn; // Sesuaikan dengan koneksi database Anda
+
         if (authenticateUser($email, $otp)) {
             // Autentikasi berhasil, kirim respons JSON
-            echo json_encode(array("message" => "Autentikasi berhasil"));
+            if ($conn->query($sql) === TRUE) {
+                echo json_encode(array("message" => "Autentikasi berhasil", "token_nobox" => $token));
+            } else {
+                echo json_encode(array('message' => 'Error: ' . $conn->error));
+            }
         } else {
             // Autentikasi gagal, kirim respons JSON dengan status 401
             echo json_encode(array("message" => "Autentikasi gagal. OTP tidak valid"));
         }
+
 
         break;
 
@@ -41,3 +56,19 @@ function authenticateUser($email, $otp)
         return false;
     }
 }
+
+
+function generateToken($email, $password)
+{
+    // Your PHP function code here
+    $nobox = new Nobox(null);
+    $tokenResponse = $nobox->generateToken($email, $password);
+
+    // echo json_encode($tokenResponse->Data);
+    return $tokenResponse->Data;
+}
+
+
+
+
+// generateToken();
