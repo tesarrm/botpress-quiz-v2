@@ -1,0 +1,124 @@
+Chatbot Ujian Botpress. Kombinasi dari API Quiz kemarin + Data Siswa + Login OTP + Tambah Fitur Jadwal Ujian dan Nilai Ujian di DB MySQL.
+
+1. Siswa login dg NIS dan passwordnya OTP (sekali pakai)
+2. Siswa dapat daftar jadwal ujian (quiz) yg perlu dikerjakan, difilter yg aktif saja. Datanya dari MySQL ditambah field Id Quiz dari API Quiz utk panggil soal yg dikerjakan. Isi datanya minimal 5 item ujian
+3. Siswa kerjakan 2-3 ujian yang ada. Hasil nilai dari pengerjaan Quiz disimpan ke MySQL
+4. Siswa bisa bisa menampilkan daftar hasil ujian
+
+Tabel:
+1. UjianJadwal : Id, Nama, TglUjian, JmlSoal, QuizId, IsAktif, Catatan
+2. UjianHasil : Id, TglJam, SiswaId, JadwalId, JmlSoal, JmlBenar, JmlSalah, Nilai, Catatan
+
+Menu Chatbot:
+1. Kerjakan Soal Ujian
+2. Daftar Hasil Ujian
+
+Dikerjakan secara tim maksimal 2 orang per tim
+
+Sudah cukup jelas?
+
+
++ hasil ujian di kirim ke orang tua
+
+==================================
+API
+
+# login
+req
+{
+    method: post
+    body : {
+       nis 
+       password 
+    }
+}
+req
+{
+    method: post
+    body: {
+        otp
+    }
+}
+res
+{
+    message: "Login berhasil" | "Login gagal"
+}
+
+# get jadwal_ujian
+res 
+{
+    data: <jadwalnya>
+}
+
+# kerjakan_ujian
+res 
+{
+    dari apinya
+}
+
+# hasil ujian 
+req
+{
+    method: post
+    body: {
+        tlg_jam
+        siswa_id
+        ujian_jadwal_id
+        jml_benar
+        jml_salah
+        nilai
+        catatan
+    }
+}
+
+
+==================================
+Database
+
+# siswa
+
+id
+nis 
+email
+password
+nama
+no_orang_tua
+
+# ujian_jadwal 
+
+id
+nama
+tgl
+jml_soal
+quiz_id
+status
+catatan
+
+# ujian_hasil
+
+id 
+tlg_jam
+siswa_id
+ujian_jadwal_id
+jml_benar
+jml_salah
+nilai
+catatan
+
+
+==================================
+Alur
+
+- guest di araahkan ke tampilan login 
+- guest login sebagai siswa
+- setelah login siswa akan ditampikan 2 menu
+    - kerjakan ujian
+    - hasil ujian
+- siswa klik menu kerjakan ujian maka akan tampil 
+    detail ujian (jaswal dll) 
+- jika dari detail ujian memilih salah satu ujian 
+    maka akan masuk ke kerjakan ujian 
+- seteleh ujian selesai maka hasil ujian secara 
+    otomatis dikirim ke orang tua
+- dan juga ditampilkan menu hasil ujian atau 
+    kembali ke menu
